@@ -5,6 +5,7 @@ from collect_zotero import collect_urls
 from latex_format import generate_latex_file
 from scraping import fetch_all_abstracts, fetch_arxiv_cscl_new
 from rank import rank_abstracts_by_relevance
+from utils import generate_pdf, clean_up
 
 if __name__ == "__main__":
 
@@ -32,4 +33,7 @@ if __name__ == "__main__":
     # Generate latex file
     filename = f"paperwatch_{collection_name}_{date.today()}"
     generate_latex_file(reordered, collection_name, date.today(), filename)
+    texfile = filename + ".tex"
+    generate_pdf(texfile)
+    clean_up(texfile)
 

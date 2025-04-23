@@ -1,3 +1,4 @@
+
 from pylatex import Document, Section, Command, Package
 from pylatex.utils import NoEscape
 
@@ -30,3 +31,4 @@ def generate_latex_file(papers, theme, date, filename):
 
     # Export .pdf and keep .tex
     doc.generate_tex(filename)
+    #doc.generate_pdf(filename, clean_tex=False, silent=True)
