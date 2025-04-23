@@ -3,7 +3,7 @@ from tqdm import tqdm
 from datetime import date
 from collect_zotero import collect_urls
 from latex_format import generate_latex_file
-from scraping import fetch_arxiv_abstract, fetch_arxiv_cscl_new
+from scraping import fetch_all_abstracts, fetch_arxiv_cscl_new
 from rank import rank_abstracts_by_relevance
 
 if __name__ == "__main__":
@@ -17,7 +17,7 @@ if __name__ == "__main__":
     urls = collect_urls(collection_name, zotero_user_id, zotero_api_key)
 
     # Scrape abstracts
-    seed_abstracts = [fetch_arxiv_abstract(url) for url in tqdm(urls, desc="Scraping abstract seeds...")]
+    seed_abstracts = fetch_all_abstracts(urls)
     
     # Collect all new arxiv papers
     new_papers = fetch_arxiv_cscl_new()
@@ -26,8 +26,10 @@ if __name__ == "__main__":
     # Rank abstracts by relevance
     ranking = rank_abstracts_by_relevance(seed_abstracts, new_abstracts)
 
-    # Write the ranking to a file
-    with open(f"paperwatch_{collection_name}_{date.today()}.txt", "w") as f:
-        reordered = [new_papers[i] for i in ranking]
-        f.write(generate_latex_file(reordered, collection_name, date.today()))
+    # Reorder the papers
+    reordered = [new_papers[i] for i in ranking]
+
+    # Generate latex file
+    filename = f"paperwatch_{collection_name}_{date.today()}"
+    generate_latex_file(reordered, collection_name, date.today(), filename)
 

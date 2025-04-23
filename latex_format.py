@@ -1,16 +1,32 @@
-def format_paper_info(paper_dict):
-    title_str = "\\section{" + paper_dict["title"] + "} \\\\\n"
-    author_str = "\\large \\textbf{" + paper_dict["authors"] + "} \\\\\\\\\n"
-    url_str = '\\url{' + paper_dict["url"] + "} \\\\\\\\\n"
-    abstract_str = paper_dict["abstract"] + "\\\\\n\n"
-    return title_str + author_str + url_str + abstract_str
+from pylatex import Document, Section, Command, Package
+from pylatex.utils import NoEscape
 
-def generate_latex_file(papers, theme, date):
-    entete = "\\documentclass{article}\n"
-    packages = ["\\usepackage[english]{babel}", "\\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}",
-                "\\usepackage{hyperref}", "\\usepackage{amsmath}", "\\usepackage{graphicx}", "\\usepackage[colorlinks=true, allcolors=blue]{hyperref}"] 
-    title_str = "\\title{Paper Watch (arXiv)\\\\ \\Large " + theme + "}\n\\author{Leo Labat}\n\\date{" + str(date) + "}\n\n"
-    beginner = "\\begin{document}\n\\maketitle\n"
-    ender = "\\end{document}"
+def format_paper_info(doc, paper):
+    with doc.create(Section(paper["title"])):
+        doc.append(NoEscape(r'\large \textbf{' + paper["authors"] + r'}\\' + "\n"))
+        doc.append(NoEscape(r'\url{' + paper["url"] + r'}\\' + "\n"))
+        doc.append(paper["abstract"] + "\n\n")
 
-    return entete + "\n".join(packages) + title_str + beginner + "\n".join(format_paper_info(paper) for paper in papers) + ender
+def generate_latex_file(papers, theme, date, filename):
+    # Setup document with custom geometry
+    doc = Document(documentclass='article')
+    
+    # Add packages
+    doc.packages.append(Package('babel', options='english'))
+    doc.packages.append(Package('geometry', options='letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm'))
+    doc.packages.append(Package('graphicx'))
+    doc.packages.append(Package('amsmath'))
+    doc.packages.append(Package('hyperref', options='colorlinks=true, allcolors=blue'))
+
+    # Add title and metadata
+    doc.preamble.append(Command('title', NoEscape(f'Paper Watch (arXiv)\\\\ \\Large {theme}')))
+    doc.preamble.append(Command('author', 'Leo Labat'))
+    doc.preamble.append(Command('date', date))
+    doc.append(NoEscape(r'\maketitle'))
+
+    # Add all papers
+    for paper in papers:
+        format_paper_info(doc, paper)
+
+    # Export .pdf and keep .tex
+    doc.generate_tex(filename)

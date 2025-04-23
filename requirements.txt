@@ -1,0 +1,8 @@
+bs4
+tqdm
+numpy
+pylatex
+pyzotero
+requests
+concurrent.futures
+sentence_transformers
