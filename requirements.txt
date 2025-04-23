@@ -4,5 +4,5 @@ numpy
 pylatex
 pyzotero
 requests
-concurrent.futures
+futures
 sentence_transformers

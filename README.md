@@ -18,11 +18,21 @@
 
 - Python 3.7+
 - Working `pdflatex` command in your system (e.g., via TeX Live or MikTeX)
-- The `lastpage` LaTeX package must be installed
+- The `lastpage` LaTeX package must be installed (*tlmgr install lastpage*)
 - Dependencies listed in `requirements.txt`:
 
 ```bash
 pip install -r requirements.txt
+```
+
+You can install a lightweight version of pdflatex :
+- on MacOS:
+```bash
+curl -sL "https://yihui.org/tinytex/install-bin-unix.sh" | sh
+```
+- on Linux:
+```bash
+wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh
 ```
 
 ---
