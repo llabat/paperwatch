@@ -2,10 +2,9 @@ import sys
 from tqdm import tqdm
 from datetime import date
 from collect_zotero import collect_urls
-from latex_format import generate_latex_file
 from scraping import fetch_all_abstracts, fetch_arxiv_cscl_new
-from rank import rank_abstracts_by_relevance
-from utils import generate_pdf, clean_up
+from rank import compute_similarities, rank_all_abstracts
+from utils import generate_ranking_pdf
 
 if __name__ == "__main__":
 
@@ -13,6 +12,7 @@ if __name__ == "__main__":
     collection_name = sys.argv[1]
     zotero_user_id = sys.argv[2]
     zotero_api_key = sys.argv[3]
+    threshold = 0.75 if len(sys.argv) < 4 else sys.argv[4]
 
     # Get urls from bib file
     urls = collect_urls(collection_name, zotero_user_id, zotero_api_key)
@@ -24,16 +24,13 @@ if __name__ == "__main__":
     new_papers = fetch_arxiv_cscl_new()
     new_abstracts = [paper["abstract"] for paper in new_papers]
 
-    # Rank abstracts by relevance
-    ranking = rank_abstracts_by_relevance(seed_abstracts, new_abstracts)
+    # Compute similarities
+    similarities = compute_similarities(seed_abstracts, new_abstracts)
 
-    # Reorder the papers
-    reordered = [new_papers[i] for i in ranking]
+    # Rank abstracts by relevance
+    ranking = rank_all_abstracts(new_papers, similarities)
 
     # Generate latex file
     filename = f"paperwatch_{collection_name}_{date.today()}"
-    generate_latex_file(reordered, collection_name, date.today(), filename)
-    texfile = filename + ".tex"
-    generate_pdf(texfile)
-    clean_up(texfile)
+    generate_ranking_pdf(ranking, collection_name, date.today(), filename)
 

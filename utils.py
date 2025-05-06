@@ -1,5 +1,6 @@
 import os
 import subprocess
+from latex_format import generate_latex_file
 
 def clean_up(texfile_name):
     name = texfile_name.replace(".tex", "")
@@ -9,3 +10,9 @@ def clean_up(texfile_name):
     
 def generate_pdf(path_to_texfile):
     result = subprocess.run(["pdflatex", "-interaction=nonstopmode", path_to_texfile])
+
+def generate_ranking_pdf(papers, theme, date, filename):
+    generate_latex_file(papers, theme, date.today(), filename)
+    texfile = filename + ".tex"
+    generate_pdf(texfile)
+    clean_up(texfile)
