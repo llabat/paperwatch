@@ -25,3 +25,14 @@ def rank_all_abstracts(abstracts_to_rank, similarities):
 
     # Reorder the papers
     return [abstracts_to_rank[i] for i in ranking]
+
+def single_out_specials(similarities, threshold):
+    # Get the indices of the new papers that are similar to the seed papers
+    beyond_threshold = np.where(similarities > threshold)
+
+    # Create a dictionary to store the indices and their corresponding similarities
+    specials = dict()
+    for i, j in zip(beyond_threshold[0], beyond_threshold[1]):
+        specials[int(i)] = specials.get(i, []) + [(int(j), float(similarities[i][j]))]
+
+    return specials

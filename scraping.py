@@ -24,6 +24,25 @@ def fetch_arxiv_cscl_new():
         })
     return papers
 
+def fetch_arxiv_details(url):
+    res = requests.get(url)
+    soup = BeautifulSoup(res.content, 'html.parser')
+    
+    if "aclanthology" in url:
+        css_selector = ".acl-abstract span"
+        title_element = soup.select_one("#title")
+    elif "arxiv" in url:
+        css_selector = ".abstract"
+        title_element = soup.select_one(".title")
+    else:
+        raise ValueError(f"Unsupported website referenced in {url}")
+    
+    abstract_element = soup.select_one(css_selector)
+    abstract = abstract_element.text.strip().replace("Abstract:", "") if abstract_element else None
+    title = title_element.text.strip().replace("Title:", "") if title_element else None
+
+    return {"title" : title, "abstract" : abstract, "url" : url}
+
 def fetch_arxiv_abstract(url):
     res = requests.get(url)
     soup = BeautifulSoup(res.content, 'html.parser')

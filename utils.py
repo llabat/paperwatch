@@ -11,8 +11,8 @@ def clean_up(texfile_name):
 def generate_pdf(path_to_texfile):
     result = subprocess.run(["pdflatex", "-interaction=nonstopmode", path_to_texfile])
 
-def generate_ranking_pdf(papers, theme, date, filename):
-    generate_latex_file(papers, theme, date.today(), filename)
+def generate_ranking_pdf(papers, theme, date, standouts, filename):
+    generate_latex_file(papers, theme, date.today(), standouts, filename)
     texfile = filename + ".tex"
     generate_pdf(texfile)
     clean_up(texfile)
